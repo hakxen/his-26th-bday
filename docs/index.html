@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Number Riddle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a0845);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f0f0f0;
+        }
+        
+        .container {
+            background: rgba(15, 15, 35, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #4a3aff;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 126, 95, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .game-area {
+            padding: 20px;
+            background: rgba(25, 25, 50, 0.6);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid #5a4bff;
+        }
+        
+        .riddle-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .riddle-text {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-weight: 500;
+            padding: 20px;
+            background: rgba(40, 40, 80, 0.5);
+            border-radius: 15px;
+            width: 100%;
+            border-left: 4px solid #ff7e5f;
+        }
+        
+        .answer-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: 2px solid #5a4bff;
+            background: rgba(20, 20, 40, 0.8);
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .answer-input:focus {
+            border-color: #ff7e5f;
+            box-shadow: 0 0 15px rgba(255, 126, 95, 0.5);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .feedback {
+            min-height: 60px;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .hint {
+            background: rgba(90, 75, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 3px solid #5a4bff;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        
+        .progress-step {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(90, 75, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active {
+            background: #ff7e5f;
+            box-shadow: 0 0 10px #ff7e5f;
+        }
+        
+        .progress-step.completed {
+            background: #5a4bff;
+            box-shadow: 0 0 10px #5a4bff;
+        }
+        
+        .result {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 30px 0;
+            background: linear-gradient(to right, #ff7e5f, #5a4bff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 126, 95, 0.3);
+            letter-spacing: 5px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+        
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+        }
+        
+        .decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.2;
+        }
+        
+        .dec-1 { top: 20px; left: 30px; }
+        .dec-2 { top: 20px; right: 30px; }
+        .dec-3 { bottom: 20px; left: 30px; }
+        .dec-4 { bottom: 20px; right: 30px; }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .reveal-container {
+            animation: reveal 1.5s ease-out;
+        }
+        
+        @keyframes reveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .riddle-text { font-size: 1.1rem; }
+            .result { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decoration dec-1"><i class="fas fa-question-circle"></i></div>
+        <div class="decoration dec-2"><i class="fas fa-dice"></i></div>
+        <div class="decoration dec-3"><i class="fas fa-key"></i></div>
+        <div class="decoration dec-4"><i class="fas fa-lock"></i></div>
+        
+        <div class="header">
+            <h1>The Enigmatic Sequence</h1>
+            <p class="subtitle">Unlock the secret number by solving these riddles</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-step active" id="step1"></div>
+            <div class="progress-step" id="step2"></div>
+            <div class="progress-step" id="step3"></div>
+            <div class="progress-step" id="step4"></div>
+        </div>
+        
+        <div class="game-area">
+            <div class="riddle-container">
+                <div class="riddle-text" id="riddle">
+                    I am the beginning of eternity,<br>
+                    The end of time and space,<br>
+                    The start of every end,<br>
+                    And the end of every place.<br>
+                    What letter am I?
+                </div>
+                
+                <input type="text" class="answer-input" id="answer" placeholder="Enter your answer..." autocomplete="off">
+                <button class="btn" id="submitBtn">Submit Answer</button>
+                
+                <div class="hint" id="hint">
+                    Hint: Think about the first letter of the word "eternity"
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+        
+        <div class="result hidden" id="result">512024</div>
+        
+        <div class="footer">
+            <p>Solve all riddles to reveal the secret number</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const riddles = [
+                {
+                    question: `I am the beginning of eternity,<br>
+                    The end of time and space,<br>
+                    The start of every end,<br>
+                    And the end of every place.<br>
+                    What letter am I?`,
+                    answer: 'e',
+                    hint: 'Think about the first letter of the word "eternity"'
+                },
+                {
+                    question: `I have keys but open no locks,<br>
+                    I have space but no room,<br>
+                    You can enter, but not go outside.<br>
+                    What am I?`,
+                    answer: 'keyboard',
+                    hint: 'You\'re using one right now to solve this riddle'
+                },
+                {
+                    question: `I speak without a mouth and hear without ears.<br>
+                    I have no body, but I come alive with the wind.<br>
+                    What am I?`,
+                    answer: 'echo',
+                    hint: 'In mountains and canyons, I repeat what you say'
+                },
+                {
+                    question: `I am taken from a mine and shut up in a wooden case,<br>
+                    from which I am never released, and yet I am used by almost every person.<br>
+                    What am I?`,
+                    answer: 'pencil lead',
+                    hint: 'It\'s made of graphite, which comes from mines'
+                }
+            ];
+            
+            const answerInput = document.getElementById('answer');
+            const submitBtn = document.getElementById('submitBtn');
+            const riddleEl = document.getElementById('riddle');
+            const feedbackEl = document.getElementById('feedback');
+            const hintEl = document.getElementById('hint');
+            const resultEl = document.getElementById('result');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            
+            let currentRiddle = 0;
+            let solvedRiddles = 0;
+            const secretNumber = "512024";
+            
+            // Initialize the game
+            updateRiddle();
+            
+            submitBtn.addEventListener('click', checkAnswer);
+            answerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+            
+            function checkAnswer() {
+                const userAnswer = answerInput.value.trim().toLowerCase();
+                
+                if (!userAnswer) {
+                    showFeedback("Please enter an answer", "error");
+                    return;
+                }
+                
+                if (userAnswer === riddles[currentRiddle].answer) {
+                    solvedRiddles++;
+                    progressSteps[currentRiddle].classList.add('completed');
+                    
+                    showFeedback("Correct! Moving to the next riddle...", "success");
+                    
+                    // Move to next riddle or show final result
+                    if (currentRiddle < riddles.length - 1) {
+                        setTimeout(() => {
+                            currentRiddle++;
+                            updateRiddle();
+                            answerInput.value = '';
+                            feedbackEl.textContent = '';
+                            feedbackEl.className = 'feedback';
+                            updateProgress();
+                        }, 1500);
+                    } else {
+                        setTimeout(revealSecret, 1500);
+                    }
+                } else {
+                    showFeedback("That's not quite right. Try again!", "error");
+                    // Shake animation for wrong answer
+                    answerInput.animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(-10px)' },
+                        { transform: 'translateX(10px)' },
+                        { transform: 'translateX(0)' }
+                    ], {
+                        duration: 400,
+                        iterations: 1
+                    });
+                }
+            }
+            
+            function updateRiddle() {
+                riddleEl.innerHTML = riddles[currentRiddle].question;
+                hintEl.textContent = riddles[currentRiddle].hint;
+            }
+            
+            function updateProgress() {
+                progressSteps.forEach((step, index) => {
+                    step.classList.remove('active');
+                    if (index === currentRiddle) {
+                        step.classList.add('active');
+                    }
+                });
+            }
+            
+            function showFeedback(message, type) {
+                feedbackEl.textContent = message;
+                feedbackEl.className = 'feedback ${type}';
+            }
+            
+            function revealSecret() {
+                document.querySelector('.game-area').classList.add('hidden');
+                resultEl.classList.remove('hidden');
+                resultEl.classList.add('reveal-container', 'pulse');
+                
+                // Add decorative elements to the revealed number
+                resultEl.innerHTML = `
+                    <div class="pulse">
+                        <i class="fas fa-star" style="color: #ff7e5f; margin-right: 15px;"></i>
+                        512024
+                        <i class="fas fa-star" style="color: #5a4bff; margin-left: 15px;"></i>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 1.2rem;">
+                        You've discovered the secret number!
+                    </p>
+                    <div>
+                        <p style="margin-top: 20px; font-size: 1.2rem;">
+                            Use the secret number in the site below:
+                        </p><br>
+                        <img src="cl1p.png" alt=""cl1p.net" />
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
